@@ -15,7 +15,7 @@ SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 SMTP_USER = "malgorzata.gendlek@rtbhouse.com"
 SMTP_PASS = os.environ.get("SMTP_PASS")  # uzyte app password
-HELPDESK_EMAIL = "gosiage1@gmail.com"
+HELPDESK_EMAIL = "helpdesk@rtbhouse.com"
 
 app = App(token=SLACK_BOT_TOKEN)
 
@@ -280,7 +280,7 @@ def handle_submission(ack, body, client, view):
         uinfo = client.users_info(user=user_id)  # wymaga scope: users:read, users:read.email
         profile = uinfo["user"].get("profile", {}) or {}
         user_name = profile.get("real_name") or uinfo["user"].get("name") or user_id
-        user_email = profile.get("email")  # <-- tu jest e-mail
+        user_email = profile.get("email")  
     except Exception:
         user_name = user_id
         user_email = None
@@ -308,7 +308,6 @@ def handle_submission(ack, body, client, view):
             desc += f"\n\n[UWAGA] Nie udało się pobrać załącznika {fid}: {e}"
 
     try:
-        # fallback: jeśli brak maila w profilu, użyj konta SMTP jako Reply-To
         from_email = user_email or SMTP_USER
         send_ticket_email(user_name, from_email, title, desc, attachments)
         confirmation = f"✅ The request has been submitted to the helpdesk.\nSubject: {title}\nDescription: {desc}"
